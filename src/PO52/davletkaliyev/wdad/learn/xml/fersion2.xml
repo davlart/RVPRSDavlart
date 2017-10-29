@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><housekeeper>
+    <tariffs coldwater="21.0" electricity="1.2" gas="6.71" hotwater="109.82"/>
+    <building flatsquantity="2" number="64" street="N.Ponova">
+        <flat area="14 кв.м." number="43" personsquantity="0">
+            <registration month="9" year="2017">
+                <coldwater>301</coldwater>
+                <hotwater>205</hotwater>
+                <electricity>1256</electricity>
+                <gas>572</gas>
+            </registration>
+            <registration month="10" year="2017">
+                <coldwater>401</coldwater>
+                <hotwater>305</hotwater>
+                <electricity>2356</electricity>
+                <gas>672</gas>
+            </registration>
+        <registration month="3" year="2017">
+            <coldwater>0.0</coldwater>
+            <hotwater>0.0</hotwater>
+            <electricity>0.0</electricity>
+            <gas>0.0</gas></registration>
+        <registration month="4" year="2017"><coldwater>120.0</coldwater><hotwater>120.0</hotwater><electricity>120.0</electricity><gas>120.0</gas></registration>
+            <registration month="4" year="2017"><coldwater>120.0</coldwater><hotwater>120.0</hotwater><electricity>120.0</electricity><gas>120.0</gas></registration>
+            <registration month="4" year="2017"><coldwater>120.0</coldwater><hotwater>120.0</hotwater><electricity>120.0</electricity><gas>120.0</gas></registration>
+        </flat>
+    </building>
+</housekeeper>
