@@ -23,13 +23,21 @@ import PO52.davletkaliyev.wdad.utils.PreferencesConstantManager;
 public class PreferencesManager {
      private static volatile PreferencesManager instance;
      private Document doc;
-     private static final String FILE_PATH="src\\PO52\\davletkaliyev\\wdad\\resources\\configuration\\appconfig.xml";
+     private static final String FILE_PATH="\\starting-monkey-to-human-path\\src\\PO52\\davletkaliyev\\wdad\\resources\\configuration\\appconfig.xml";
 
     private PreferencesManager() throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         DocumentBuilder builder = factory.newDocumentBuilder();
         doc = builder.parse(new File(FILE_PATH));
+    }
+
+    public String getName(String object) {
+        StringBuilder nameInfo = new StringBuilder("rmi://");
+        nameInfo.append(getProperty(PreferencesConstantManager.REGISTRYADDRESS)).append(":")
+                .append(getProperty(PreferencesConstantManager.REGISTRYPORT)).append("/")
+                .append(object);
+        return nameInfo.toString();
     }
 
     public static PreferencesManager getInstance() throws Exception {
@@ -77,10 +85,18 @@ public class PreferencesManager {
     }
 
     public void addBindedObject(String name, String className) {
-        Element element=(Element) doc.createElement("bindedobject");
-        element.setAttribute("class",className);
-        element.setAttribute("name",name);
+        NodeList nodeList = doc.getElementsByTagName("bindedobject");
+        Element element;
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            element = (Element) nodeList.item(i);
+            if ((element.getAttribute("class").equals(className)) & (element.getAttribute("name").equals(name)))
+                return;
+            }
+        element = doc.createElement("bindedobject");
+        element.setAttribute("class", className);
+        element.setAttribute("name", name);
         getElement("rmi").appendChild(element);
+        saveTransformXml();
     }
 
     public void removeBindedObject(String name) {
@@ -93,7 +109,8 @@ public class PreferencesManager {
                                         getElement("rmi").removeChild(element);
                        }
                    }
-           }
+        saveTransformXml();
+    }
 
 
     private Element getElement(String nameField) {
