@@ -11,6 +11,10 @@ public class Flat {
     double area;
     List<Registration> registrations;
 
+    public Flat(){
+
+    }
+
     public Flat(int number, int personsQuantity, double area, List<Registration> registrations) {
         this.number = number;
         this.personsQuantity = personsQuantity;

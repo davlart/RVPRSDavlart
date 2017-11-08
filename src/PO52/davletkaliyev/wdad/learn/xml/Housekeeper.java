@@ -1,5 +1,8 @@
 package PO52.davletkaliyev.wdad.learn.xml;
 
+import PO52.davletkaliyev.wdad.utils.date.Building;
+import PO52.davletkaliyev.wdad.utils.date.Flat;
+import PO52.davletkaliyev.wdad.utils.date.Registration;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -16,7 +19,11 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 /**
@@ -74,6 +81,59 @@ public class Housekeeper {
                 return flat;
         }
         return null;
+    }
+
+    public Flat getFlat(Building building,int flatNumber) throws ParseException {
+        Flat resultFlat = new Flat();
+
+        Element buildingElm = getBuilding(building.getStreet(),Integer.parseInt(building.getNumber()));
+        if(building == null) return null;
+        Element flatElm = getFlat(buildingElm, flatNumber);
+        if(flatElm == null) return null;
+
+        resultFlat.setNumber(Integer.parseInt(flatElm.getAttribute("nuber")));
+        resultFlat.setArea(Double.parseDouble(flatElm.getAttribute("area")));
+        resultFlat.setPersonsQuantity(Integer.parseInt(flatElm.getAttribute("personsquantity")));
+
+        ArrayList<Registration> registrations = new ArrayList<Registration>();
+        Registration registrationBuf;
+        NodeList registrationNodeList = flatElm.getElementsByTagName("registration");
+        Element registrationElm;
+
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("MM.yyyy");
+        String coldwater,hotwater,electricity,gas,mounth,year;
+
+
+        for (int i = 0; i < registrationNodeList.getLength() ; i++) {
+            registrationBuf = new Registration();
+            registrationElm = (Element) registrationNodeList.item(i);
+
+            coldwater =  registrationElm.getElementsByTagName("coldwater").item(0).getTextContent();
+            if(coldwater!=null)
+                registrationBuf.setColdwater(Double.parseDouble(coldwater));
+
+            hotwater =  registrationElm.getElementsByTagName("hotwater").item(0).getTextContent();
+            if(hotwater != null)
+                registrationBuf.setHotwater(Double.parseDouble(hotwater));
+
+            electricity =  registrationElm.getElementsByTagName("electricity").item(0).getTextContent();
+            if(electricity != null)
+                registrationBuf.setElectricity(Double.parseDouble(electricity));
+
+            gas =  registrationElm.getElementsByTagName("gas").item(0).getTextContent();
+            if(gas != null)
+                registrationBuf.setGas(Double.parseDouble(gas));
+
+            mounth =  registrationElm.getAttribute("mounth");
+            year = registrationElm.getAttribute("year");
+            if((mounth != null)&&(year != null))
+            registrationBuf.setDate(format.parse(mounth+"."+year));
+            registrations.add(registrationBuf);
+        }
+        if(registrations.size() != 0)
+            resultFlat.setRegistrations(registrations);
+        return resultFlat;
     }
     
     private NodeList getTariffs(){
@@ -179,6 +239,12 @@ public class Housekeeper {
         else return getBill(registrationCurrentDay,registrationBeforeData);
         
     }
+
+    public double getBill(Building building, int flatNumber){
+        return getBill(building.getStreet(),Integer.parseInt(building.getNumber()),flatNumber);
+    }
+
+
 ////    изменяющий стоимость заданной  единицы показания счетчика (ХВС, ГВС, электроэнергия, газ).
     public void setTariff (String tariffName, double newValue) throws TransformException {
         NodeList tariffs = doc.getElementsByTagName("tariffs");
@@ -211,6 +277,14 @@ public class Housekeeper {
         registration.appendChild(bufElementTrafic);
 
         saveTransformXML();
+    }
+
+    public void addRegistration(Building building, int flatNumber, Registration registration) throws TransformException {
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(registration.getDate());
+        addRegistration(building.getStreet(),Integer.parseInt(building.getNumber()),
+                flatNumber,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH) + 1,
+                registration.getColdwater(), registration.getHotwater(), registration.getElectricity(),registration.getGas());
     }
 
     private void saveTransformXML() throws TransformException {

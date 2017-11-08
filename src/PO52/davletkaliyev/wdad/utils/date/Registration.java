@@ -12,6 +12,10 @@ public class Registration {
     double electricity;
     double gas;
 
+    public  Registration(){
+
+    }
+
     public Registration(Date date, double coldwater, double hotwater, double electricity, double gas) {
         this.date = date;
         this.coldwater = coldwater;
