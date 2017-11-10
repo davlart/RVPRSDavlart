@@ -1,11 +1,12 @@
 package PO52.davletkaliyev.wdad.utils.date;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
 /**
  * Created by ArthurArt on 06.11.2017.
  */
-public class Tariffs {
+public class Tariffs implements Serializable {
     static HashMap<String,Double> values;
     static final String COLDWATER_KEY = "coldwater";
     static final String HOTWATER_KEY = "hotwater";

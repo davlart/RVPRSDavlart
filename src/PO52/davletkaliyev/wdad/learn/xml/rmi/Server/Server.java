@@ -3,9 +3,11 @@ package PO52.davletkaliyev.wdad.learn.xml.rmi.Server;
 import PO52.davletkaliyev.wdad.data.managers.PreferencesManager;
 import PO52.davletkaliyev.wdad.learn.xml.rmi.Client.XmlDataManager;
 
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
 /**
  * Created by ArthurArt on 06.11.2017.
@@ -20,7 +22,7 @@ public class Server {
  Если указываем директорию, то последний символ в пути должен быть '/' (либо "\\", если Windows)
 2) Загружаемся по http - тогда URL должна указывать на *.jar файл. Например, http://mastefanov.com/test/codebase/base.jar
 */
-    static final private String CODEBASE_URL = "file:\\Work\\РВПРС\\laba1\\src\\PO52\\davletkaliyev\\wdad\\learn\\xml\\rmi\\security.policy";
+    //static final private String CODEBASE_URL = "file:\\Work\\РВПРС\\laba1\\src\\PO52\\davletkaliyev\\wdad\\learn\\xml\\rmi\\security.policy";
     static final private int REGISTRY_PORT = 1099;
     static final private String EXECUTOR_NAME = "mySuperPuperExecutor";
 
@@ -37,17 +39,26 @@ public class Server {
         System.out.println("prepared");
         Registry registry = null;
         try {
+            XmlDataManagerImpl xdmi = new XmlDataManagerImpl(); // создаем удаленный объект
+
             //если реестр запущен
             registry = LocateRegistry.createRegistry(REGISTRY_PORT);
+            // Remote stub =  UnicastRemoteObject.exportObject(xdmi, 0);
+            registry.rebind(EXECUTOR_NAME, new XmlDataManagerImpl());
             prefManager.addBindedObject("XmlDataManager", XmlDataManager.class.getCanonicalName());
             //если Сервер должен создать реестр, то можно использовать следующую строку
             //registry = LocateRegistry.createRegistry(REGISTRY_PORT);
             //но в этом случае необходимо, чтобы в директории, из которой запускался Сервер были определения всех *.class файлов
+
+
         } catch (RemoteException re) {
             System.err.println("cant locate registry");
             re.printStackTrace();
         }
-        System.out.println("link...");
+            System.out.println("Running");
+            /*while (true) {
+                Thread.sleep(Integer.MAX_VALUE);
+            }*/
 
     }
 

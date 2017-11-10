@@ -1,11 +1,12 @@
 package PO52.davletkaliyev.wdad.utils.date;
 
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by ArthurArt on 06.11.2017.
  */
-public class Registration {
+public class Registration implements Serializable {
     Date date;
     double coldwater;
     double hotwater;

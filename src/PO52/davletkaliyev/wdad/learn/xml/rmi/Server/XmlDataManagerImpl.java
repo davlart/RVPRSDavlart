@@ -19,8 +19,8 @@ import java.text.ParseException;
 public class XmlDataManagerImpl extends UnicastRemoteObject implements XmlDataManager {
     Housekeeper housekeeper;
 
-    protected XmlDataManagerImpl() throws Exception {
-        housekeeper = new Housekeeper("src\\PO52\\davletkaliyev\\wdad\\learn\\rmi\\Server\\XmlDataStorage.xml");
+    public XmlDataManagerImpl() throws RemoteException, ParseException {
+        housekeeper = new Housekeeper("D:\\Work\\РВПРС\\laba1\\src\\PO52\\davletkaliyev\\wdad\\learn\\xml\\fersion2.xml");
     }
 
     protected XmlDataManagerImpl(int port, RMIClientSocketFactory csf, RMIServerSocketFactory ssf) throws RemoteException {

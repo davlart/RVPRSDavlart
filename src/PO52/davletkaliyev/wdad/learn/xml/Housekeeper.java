@@ -19,25 +19,24 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serializable;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
 /**
  * Created by ArthurArt on 02.11.2017.
  */
-public class Housekeeper {
+public class Housekeeper implements Serializable{
     final File xmlFile;
     private String filePath;
     private Document doc;
     private NodeList buildingNodes;
     private Tariffs tariffs;
+    List<Building> buildings;
 
     
-    public Housekeeper(String fileName){
+    public Housekeeper(String fileName) throws ParseException {
         this.filePath = fileName;
         this.xmlFile = new File(filePath);
         try {
@@ -56,11 +55,100 @@ public class Housekeeper {
 
         this.buildingNodes = getBuildingList();
         this.tariffs = setTariffs();
+        this.buildings = getBuildingsList();
+    }
+
+    public List<Building> getBuilding(){
+        return this.buildings;
+    }
+
+    private ArrayList<Building> getBuildingsList() throws ParseException {
+        ArrayList<Building> buildingsList = new ArrayList<Building>();
+        Element building;
+        Building bufBulding;
+
+        for (int i = 0; i < buildingNodes.getLength(); i++) {
+            building = (Element) buildingNodes.item(i);
+            bufBulding = new Building();
+            bufBulding.setNumber(Integer.parseInt(building.getAttribute("number")));
+            bufBulding.setStreet(building.getAttribute("street"));
+
+            bufBulding.setFlatList(getFlatList(building));
+            buildingsList.add(bufBulding);
+        }
+        return buildingsList;
+    }
+
+
+    private ArrayList<Flat> getFlatList(Element building) throws ParseException {
+        ArrayList<Flat> flatsArrayList = new ArrayList<Flat>();
+        Element flatElem;
+        NodeList flatNodeList = building.getElementsByTagName("flat");
+        Flat bufFlat;
+        for (int i = 0; i < flatNodeList.getLength(); i++) {
+            flatElem = (Element) flatNodeList.item(i);
+            bufFlat = new Flat();
+
+            bufFlat.setPersonsQuantity(Integer.parseInt(flatElem.getAttribute("personsquantity")));
+            bufFlat.setNumber(Integer.parseInt(flatElem.getAttribute("number")));
+            bufFlat.setArea(Double.parseDouble(flatElem.getAttribute("area")));
+            bufFlat.setRegistrations(getRegistrationList(flatElem));
+
+            flatsArrayList.add(bufFlat);
+        }
+        if(!flatsArrayList.isEmpty()) return flatsArrayList;
+        return null;
+    }
+
+    private ArrayList<Registration> getRegistrationList(Element flat) throws ParseException {
+        ArrayList<Registration> registrations = new ArrayList<Registration>();
+        Registration bufRegistration;
+        NodeList registrationNodeList = flat.getElementsByTagName("registration");
+        Element registrationElm;
+
+        SimpleDateFormat format = new SimpleDateFormat();
+        format.applyPattern("MM.yyyy");
+        String coldwater,hotwater,electricity,gas,mounth,year;
+
+        for (int i = 0; i < registrationNodeList.getLength(); i++) {
+            registrationElm = (Element) registrationNodeList.item(i);
+            bufRegistration = new Registration();
+            coldwater =  registrationElm.getElementsByTagName("coldwater").item(0).getTextContent();
+            if(coldwater!=null)
+                bufRegistration.setColdwater(Double.parseDouble(coldwater));
+
+            hotwater =  registrationElm.getElementsByTagName("hotwater").item(0).getTextContent();
+            if(hotwater != null)
+                bufRegistration.setHotwater(Double.parseDouble(hotwater));
+
+            electricity =  registrationElm.getElementsByTagName("electricity").item(0).getTextContent();
+            if(electricity != null)
+                bufRegistration.setElectricity(Double.parseDouble(electricity));
+
+            gas =  registrationElm.getElementsByTagName("gas").item(0).getTextContent();
+            if(gas != null)
+                bufRegistration.setGas(Double.parseDouble(gas));
+
+            mounth =  registrationElm.getAttribute("mounth");
+            year = registrationElm.getAttribute("year");
+            if((mounth != null)&&(year != null))
+                bufRegistration.setDate(format.parse((mounth+1)+"."+year));
+
+            registrations.add(bufRegistration);
+        }
+        if(!registrations.isEmpty()) return registrations;
+
+        return null;
     }
 
     private NodeList getBuildingList(){
         return doc.getElementsByTagName("building");
     }
+    private NodeList getFlatNodeList(Element building) { return building.getElementsByTagName("flat");}
+    private NodeList getRegistrations(Element flat){
+        return flat.getElementsByTagName("registration");
+    }
+
     private Element getBuilding(String street, int number){
         Element building;
         for (int i = 0; i < buildingNodes.getLength(); i++) {
@@ -86,12 +174,12 @@ public class Housekeeper {
     public Flat getFlat(Building building,int flatNumber) throws ParseException {
         Flat resultFlat = new Flat();
 
-        Element buildingElm = getBuilding(building.getStreet(),Integer.parseInt(building.getNumber()));
+        Element buildingElm = getBuilding(building.getStreet(),building.getNumber());
         if(building == null) return null;
         Element flatElm = getFlat(buildingElm, flatNumber);
         if(flatElm == null) return null;
 
-        resultFlat.setNumber(Integer.parseInt(flatElm.getAttribute("nuber")));
+        resultFlat.setNumber(Integer.parseInt(flatElm.getAttribute("number")));
         resultFlat.setArea(Double.parseDouble(flatElm.getAttribute("area")));
         resultFlat.setPersonsQuantity(Integer.parseInt(flatElm.getAttribute("personsquantity")));
 
@@ -149,10 +237,25 @@ public class Housekeeper {
          Double.parseDouble( tariffs.getAttribute("gas"))
         );
     }
-    
-    private NodeList getRegistrations(Element flat){
-        return flat.getElementsByTagName("registration");        
+
+//    Calendar calendar = new GregorianCalendar();
+//        calendar.setTime(registration.getDate());
+//    addRegistration(building.getStreet(),building.getNumber(),
+//    flatNumber,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH) + 1,
+//            registration.getColdwater(), registration.getHotwater(), registration.getElectricity(),registration.getGas());
+
+    private Registration getRegistrationCurrentDay(int month,int year, Flat flat){
+        List<Registration> registrations = flat.getRegistrations();
+        Calendar calendar = new GregorianCalendar();
+        for (int i = 0; i < registrations.size() ; i++) {
+            calendar.setTime(registrations.get(i).getDate());
+            if((month == calendar.get(Calendar.MONTH) + 1)
+                    &&(year == calendar.get(Calendar.YEAR)))
+                return registrations.get(i);
+        }
+        return null;
     }
+
 
     private Element getRegistrationCurrentDay(int month,int year, Element flat){
         NodeList registrations = getRegistrations(flat);
@@ -162,6 +265,26 @@ public class Housekeeper {
             if((month == Integer.parseInt(registration.getAttribute("month")))
                 &&(Integer.parseInt(registration.getAttribute("year")) == year))
                 return registration;
+        }
+        return null;
+    }
+
+    private Registration getRegistrationBeforeData(int currentMonth,int currentYear, Flat flat){
+        List<Registration> registrations = flat.getRegistrations();
+        if(registrations.size()<2) return null;
+        Registration registration;
+        Registration beforeData = registrations.get(0);
+        Calendar calendarRegistration = new GregorianCalendar();
+        Calendar calendarBeforeData = new GregorianCalendar();
+        for (int i = 0; i < registrations.size(); i++) {
+            registration = registrations.get(i);
+            calendarRegistration.setTime(registration.getDate());
+            calendarBeforeData.setTime(beforeData.getDate());
+            if(((calendarRegistration.get(Calendar.MONTH) + 1) < currentMonth)
+                    &&(calendarRegistration.get(Calendar.YEAR) <= currentYear)
+                    &&((calendarRegistration.get(Calendar.YEAR)) >= calendarBeforeData.get(Calendar.YEAR))
+                    &&((calendarRegistration.get(Calendar.MONTH) + 1) >= (calendarBeforeData.get(Calendar.MONTH) + 1)))
+                beforeData = registration;
         }
         return null;
     }
@@ -183,6 +306,15 @@ public class Housekeeper {
 
         return beforeData;
     }
+    private double getBill(Registration toData){
+        double result = 0.0;
+        result +=  toData.getColdwater()*tariffs.coldwater;
+        result +=  toData.getHotwater()*tariffs.hotwater;
+        result +=  toData.getElectricity()*tariffs.electricity;
+        result +=  toData.getGas()*tariffs.gas;
+
+        return result;
+    }
 
     private double getBill(Element toData){
      double result = 0.0;
@@ -197,6 +329,17 @@ public class Housekeeper {
 
         return result;
     }
+
+    private double getBill(Registration toData, Registration beforeData){
+        double result = 0.0;
+        result +=  (toData.getColdwater()-beforeData.getColdwater())*tariffs.coldwater;
+        result +=  (toData.getHotwater()-beforeData.getHotwater())*tariffs.hotwater;
+        result +=  (toData.getElectricity()-beforeData.getElectricity())*tariffs.electricity;
+        result +=  (toData.getGas()-beforeData.getGas())*tariffs.gas;
+
+        return result;
+    }
+
     private double getBill(Element toData,Element beforeData){
         double result = 0.0;
 
@@ -223,6 +366,31 @@ public class Housekeeper {
         return result;
     }
 
+    public double getBill2(String street, int buildingNumber, int flatNumber){
+        Building building = null;
+
+        for (int i = 0; i < buildings.size(); i++) {
+            if(buildings.get(i).getStreet().equals(street)&&(buildings.get(i).getNumber() == buildingNumber))
+                building = buildings.get(i);
+        }
+        if(building == null) return 0.0;
+
+        List<Flat> flatList = building.getFlatList();
+        Flat flat = null;
+        for (int i = 0; i < flatList.size(); i++) {
+            if(flatList.get(i).getNumber()==flatNumber) flat = flatList.get(i);
+        }
+        if(flat == null) return 0.0;
+        Calendar toData = GregorianCalendar.getInstance();
+        int currentMonth = toData.get(Calendar.MONTH)+1;
+        int currentYear = toData.get(Calendar.YEAR);
+        Registration registrationCurrentDay = getRegistrationCurrentDay(currentMonth,currentYear,flat);
+        if(registrationCurrentDay == null) return 0.0;
+        Registration registrationBeforeData = getRegistrationBeforeData(currentMonth,currentYear,flat);
+        if(registrationBeforeData == null) return getBill(registrationCurrentDay);
+        else return getBill(registrationCurrentDay,registrationBeforeData);
+    }
+
     public double getBill(String street, int buildingNumber, int flatNumber){
 
         Element building = getBuilding(street,buildingNumber);
@@ -241,7 +409,7 @@ public class Housekeeper {
     }
 
     public double getBill(Building building, int flatNumber){
-        return getBill(building.getStreet(),Integer.parseInt(building.getNumber()),flatNumber);
+        return getBill(building.getStreet(),building.getNumber(),flatNumber);
     }
 
 
@@ -282,7 +450,7 @@ public class Housekeeper {
     public void addRegistration(Building building, int flatNumber, Registration registration) throws TransformException {
         Calendar calendar = new GregorianCalendar();
         calendar.setTime(registration.getDate());
-        addRegistration(building.getStreet(),Integer.parseInt(building.getNumber()),
+        addRegistration(building.getStreet(),building.getNumber(),
                 flatNumber,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH) + 1,
                 registration.getColdwater(), registration.getHotwater(), registration.getElectricity(),registration.getGas());
     }

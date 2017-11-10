@@ -1,11 +1,12 @@
 package PO52.davletkaliyev.wdad.utils.date;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
  * Created by ArthurArt on 06.11.2017.
  */
-public class Flat {
+public class Flat implements Serializable {
     int number;
     int personsQuantity;
     double area;

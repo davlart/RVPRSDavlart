@@ -23,7 +23,7 @@ import PO52.davletkaliyev.wdad.utils.PreferencesConstantManager;
 public class PreferencesManager {
      private static volatile PreferencesManager instance;
      private Document doc;
-     private static final String FILE_PATH="\\starting-monkey-to-human-path\\src\\PO52\\davletkaliyev\\wdad\\resources\\configuration\\appconfig.xml";
+     private static final String FILE_PATH="D:\\Work\\РВПРС\\laba1\\src\\PO52\\davletkaliyev\\wdad\\resources\\configuration\\appconfig.xml";
 
     private PreferencesManager() throws Exception {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
