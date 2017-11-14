@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <housekeeper>
+        <tariffs coldwater = "ColdwaterCDATA" hotwater = "hotwaterCDATA" electricity = "electricityCDATA" gas = "gasCDATA">
+        </tariffs>
+    </housekeeper>
+    <tariffs coldwater = "ColdwaterCDATA" hotwater = "hotwaterCDATA" electricity = "electricityCDATA" gas = "gasCDATA">
+    </tariffs>
+    <building street = "streetCDATA" number = "numberCDATA" flatsquantity = "flatsquantityCDATA">
+        <flat number = "numberCdata" personsquantity = "0" area = "areaCDATA">
+        </flat>
+    </building>
+    <flat number = "numberCdata" personsquantity = "0" area = "areaCDATA">
+        <registration month = "1" year = "yearCDATA"></registration>
+    </flat>
+    <registration month = "1" year = "yearCDATA">
+        <coldwater>PCDATA</coldwater>
+    </registration>
+    <coldwater>PCDATA</coldwater>
+    <coldwater>hotwater</coldwater>
+    <coldwater>electricity</coldwater>
+    <coldwater>gas</coldwater>
+</configuration>
