@@ -1,7 +1,7 @@
 package PO52.davletkaliyev.wdad.learn.xml.rmi.Server;
 
 import PO52.davletkaliyev.wdad.learn.xml.Housekeeper;
-import PO52.davletkaliyev.wdad.learn.xml.rmi.Client.XmlDataManager;
+import PO52.davletkaliyev.wdad.data.managers.DataManager;
 import PO52.davletkaliyev.wdad.utils.date.Building;
 import PO52.davletkaliyev.wdad.utils.date.Flat;
 import PO52.davletkaliyev.wdad.utils.date.Registration;
@@ -16,7 +16,7 @@ import java.text.ParseException;
 /**
  * Created by ArthurArt on 06.11.2017.
  */
-public class XmlDataManagerImpl extends UnicastRemoteObject implements XmlDataManager {
+public class XmlDataManagerImpl extends UnicastRemoteObject implements DataManager {
     Housekeeper housekeeper;
 
     public XmlDataManagerImpl() throws RemoteException, ParseException {

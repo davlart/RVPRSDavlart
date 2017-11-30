@@ -8,9 +8,20 @@
             </registry>
         </server>
         <client>
-            <policypath>client.policy</policypath>
+            <policypath>D:\Work\РВПРС\Exmple2\exm1\src\rmi\security.policy</policypath>
             <usecodebaseonly>no</usecodebaseonly>
         </client>
         <classprovider>http://www.yourhost.free.ru/cp/cp.jar</classprovider>
-    <bindedobject class="PO52.davletkaliyev.wdad.learn.xml.rmi.Client.XmlDataManager" name="XmlDataManager"/></rmi>
+    <bindedobject class="PO52.davletkaliyev.wdad.data.managers.XmlDataManager" name="XmlDataManager"/>
+    <bindedobject class="PO52.davletkaliyev.wdad.data.managers.DataManager" name="DataManager"/></rmi>
+    <datasource>
+        <classname>jdbc:mysql:</classname>
+        <drivertype>com.mysql.jdbc.Driver</drivertype>
+        <hostName>localhost</hostName>
+        <port>3306</port>
+        <DBName>housekeeper</DBName>
+        <user>root</user>
+        <pass/>
+    </datasource>
+
 </appconfig>

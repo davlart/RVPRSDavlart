@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?><housekeeper>
-    <tariffs coldwater="21.0" electricity="1.2" gas="6.71" hotwater="109.82"/>
+    <tariffs coldwater="100.0" electricity="1.2" gas="6.71" hotwater="109.82"/>
     <building flatsquantity="2" number="64" street="N.Ponova">
         <flat area="14.4" number="43" personsquantity="0">
             <registration month="10" year="2017">
@@ -31,7 +31,13 @@
             <electricity>120.0</electricity>
             <gas>120.0</gas>
         </registration>
-       <registration month="4" year="2017"><coldwater>120.0</coldwater><hotwater>120.0</hotwater><electricity>120.0</electricity><gas>120.0</gas></registration></flat>
+       <registration month="4" year="2017"><coldwater>120.0</coldwater><hotwater>120.0</hotwater><electricity>120.0</electricity><gas>120.0</gas></registration>
+            <registration month="4" year="2017"><coldwater>111.0</coldwater><hotwater>111.0</hotwater><electricity>111.0</electricity><gas>111.0</gas></registration>
+            <registration month="4" year="2017">
+                <coldwater>111.0</coldwater>
+                <hotwater>611.0</hotwater>
+                <electricity>1851.0</electricity>
+                <gas>333.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="1" year="2000"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration><registration month="4" year="2017"><coldwater>0.0</coldwater><hotwater>0.0</hotwater><electricity>0.0</electricity><gas>0.0</gas></registration></flat>
     </building>
     <building flatsquantity="2" number="32" street="G.Ponova">
         <flat area="14.4" number="43" personsquantity="0">

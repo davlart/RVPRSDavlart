@@ -28,7 +28,7 @@ import java.util.*;
  * Created by ArthurArt on 02.11.2017.
  */
 public class Housekeeper implements Serializable{
-    final File xmlFile;
+    File xmlFile;
     private String filePath;
     private Document doc;
     private NodeList buildingNodes;
@@ -53,12 +53,14 @@ public class Housekeeper implements Serializable{
             ex.printStackTrace(System.out);
         }
 
-        this.buildingNodes = getBuildingList();
+        this.buildingNodes = doc.getElementsByTagName("building");
         this.tariffs = setTariffs();
         this.buildings = getBuildingsList();
     }
 
-    public List<Building> getBuilding(){
+    public Housekeeper(){}
+
+    public List<Building> getBuildingList(){
         return this.buildings;
     }
 
@@ -78,7 +80,6 @@ public class Housekeeper implements Serializable{
         }
         return buildingsList;
     }
-
 
     private ArrayList<Flat> getFlatList(Element building) throws ParseException {
         ArrayList<Flat> flatsArrayList = new ArrayList<Flat>();
@@ -129,24 +130,16 @@ public class Housekeeper implements Serializable{
             if(gas != null)
                 bufRegistration.setGas(Double.parseDouble(gas));
 
-            mounth =  registrationElm.getAttribute("mounth");
+            mounth = registrationElm.getAttribute("month");
             year = registrationElm.getAttribute("year");
             if((mounth != null)&&(year != null))
-                bufRegistration.setDate(format.parse((mounth+1)+"."+year));
+                bufRegistration.setDate(format.parse(mounth+"."+year));
 
             registrations.add(bufRegistration);
         }
         if(!registrations.isEmpty()) return registrations;
 
         return null;
-    }
-
-    private NodeList getBuildingList(){
-        return doc.getElementsByTagName("building");
-    }
-    private NodeList getFlatNodeList(Element building) { return building.getElementsByTagName("flat");}
-    private NodeList getRegistrations(Element flat){
-        return flat.getElementsByTagName("registration");
     }
 
     private Element getBuilding(String street, int number){
@@ -172,60 +165,12 @@ public class Housekeeper implements Serializable{
     }
 
     public Flat getFlat(Building building,int flatNumber) throws ParseException {
-        Flat resultFlat = new Flat();
-
-        Element buildingElm = getBuilding(building.getStreet(),building.getNumber());
-        if(building == null) return null;
-        Element flatElm = getFlat(buildingElm, flatNumber);
-        if(flatElm == null) return null;
-
-        resultFlat.setNumber(Integer.parseInt(flatElm.getAttribute("number")));
-        resultFlat.setArea(Double.parseDouble(flatElm.getAttribute("area")));
-        resultFlat.setPersonsQuantity(Integer.parseInt(flatElm.getAttribute("personsquantity")));
-
-        ArrayList<Registration> registrations = new ArrayList<Registration>();
-        Registration registrationBuf;
-        NodeList registrationNodeList = flatElm.getElementsByTagName("registration");
-        Element registrationElm;
-
-        SimpleDateFormat format = new SimpleDateFormat();
-        format.applyPattern("MM.yyyy");
-        String coldwater,hotwater,electricity,gas,mounth,year;
-
-
-        for (int i = 0; i < registrationNodeList.getLength() ; i++) {
-            registrationBuf = new Registration();
-            registrationElm = (Element) registrationNodeList.item(i);
-
-            coldwater =  registrationElm.getElementsByTagName("coldwater").item(0).getTextContent();
-            if(coldwater!=null)
-                registrationBuf.setColdwater(Double.parseDouble(coldwater));
-
-            hotwater =  registrationElm.getElementsByTagName("hotwater").item(0).getTextContent();
-            if(hotwater != null)
-                registrationBuf.setHotwater(Double.parseDouble(hotwater));
-
-            electricity =  registrationElm.getElementsByTagName("electricity").item(0).getTextContent();
-            if(electricity != null)
-                registrationBuf.setElectricity(Double.parseDouble(electricity));
-
-            gas =  registrationElm.getElementsByTagName("gas").item(0).getTextContent();
-            if(gas != null)
-                registrationBuf.setGas(Double.parseDouble(gas));
-
-            mounth =  registrationElm.getAttribute("mounth");
-            year = registrationElm.getAttribute("year");
-            if((mounth != null)&&(year != null))
-            registrationBuf.setDate(format.parse(mounth+"."+year));
-            registrations.add(registrationBuf);
+        for (Building buildingElm: buildings) {
+            if(building.getStreet().equals(buildingElm.getStreet())&&(building.getNumber() == buildingElm.getNumber()))
+                 for(Flat flatEml: buildingElm.getFlatList())
+                     if(flatNumber == flatEml.getNumber()) return flatEml;
         }
-        if(registrations.size() != 0)
-            resultFlat.setRegistrations(registrations);
-        return resultFlat;
-    }
-    
-    private NodeList getTariffs(){
-        return doc.getElementsByTagName("tariffs");
+        return null;
     }
 
     private Tariffs setTariffs(){
@@ -237,12 +182,6 @@ public class Housekeeper implements Serializable{
          Double.parseDouble( tariffs.getAttribute("gas"))
         );
     }
-
-//    Calendar calendar = new GregorianCalendar();
-//        calendar.setTime(registration.getDate());
-//    addRegistration(building.getStreet(),building.getNumber(),
-//    flatNumber,calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH) + 1,
-//            registration.getColdwater(), registration.getHotwater(), registration.getElectricity(),registration.getGas());
 
     private Registration getRegistrationCurrentDay(int month,int year, Flat flat){
         List<Registration> registrations = flat.getRegistrations();
@@ -256,26 +195,16 @@ public class Housekeeper implements Serializable{
         return null;
     }
 
-
-    private Element getRegistrationCurrentDay(int month,int year, Element flat){
-        NodeList registrations = getRegistrations(flat);
-        Element registration;
-        for (int i = 0; i < registrations.getLength() ; i++) {
-            registration = (Element) registrations.item(i);
-            if((month == Integer.parseInt(registration.getAttribute("month")))
-                &&(Integer.parseInt(registration.getAttribute("year")) == year))
-                return registration;
-        }
-        return null;
-    }
-
     private Registration getRegistrationBeforeData(int currentMonth,int currentYear, Flat flat){
+        Calendar calendarRegistration = new GregorianCalendar();
+        Calendar calendarBeforeData = new GregorianCalendar();
         List<Registration> registrations = flat.getRegistrations();
         if(registrations.size()<2) return null;
         Registration registration;
+        calendarBeforeData.setTime(registrations.get(0).getDate());
         Registration beforeData = registrations.get(0);
-        Calendar calendarRegistration = new GregorianCalendar();
-        Calendar calendarBeforeData = new GregorianCalendar();
+        if((calendarBeforeData.get(Calendar.YEAR) == currentYear)&&((calendarBeforeData.get(Calendar.MONTH) + 1)==currentMonth))
+            beforeData = registrations.get(1);
         for (int i = 0; i < registrations.size(); i++) {
             registration = registrations.get(i);
             calendarRegistration.setTime(registration.getDate());
@@ -286,46 +215,16 @@ public class Housekeeper implements Serializable{
                     &&((calendarRegistration.get(Calendar.MONTH) + 1) >= (calendarBeforeData.get(Calendar.MONTH) + 1)))
                 beforeData = registration;
         }
+        if(beforeData != null) return beforeData;
         return null;
     }
 
-    private Element getRegistrationBeforeData(int currentMonth,int currentYear, Element flat){
-        NodeList registrations = getRegistrations(flat);
-        if(registrations.getLength()<2) return null;
-        Element registration;
-        Element beforeData = (Element) registrations.item(0);
-        for (int i = 0; i < registrations.getLength(); i++) {
-            registration = (Element) registrations.item(i);
-            if((Integer.parseInt(registration.getAttribute("month")) < currentMonth)
-               &&(Integer.parseInt(registration.getAttribute("year")) <= currentYear)
-               &&(Integer.parseInt(registration.getAttribute("year")) >= Integer.parseInt(beforeData.getAttribute("year")))
-               &&(Integer.parseInt(registration.getAttribute("month")) >= Integer.parseInt(beforeData.getAttribute("month")))
-                )
-                beforeData = registration;
-        }
-
-        return beforeData;
-    }
     private double getBill(Registration toData){
         double result = 0.0;
         result +=  toData.getColdwater()*tariffs.coldwater;
         result +=  toData.getHotwater()*tariffs.hotwater;
         result +=  toData.getElectricity()*tariffs.electricity;
         result +=  toData.getGas()*tariffs.gas;
-
-        return result;
-    }
-
-    private double getBill(Element toData){
-     double result = 0.0;
-        if((toData.getElementsByTagName("coldwater")!=null))
-            result += Double.parseDouble(toData.getElementsByTagName("coldwater").item(0).getTextContent())*tariffs.coldwater;
-        if((toData.getElementsByTagName("hotwater")!=null))
-            result += Double.parseDouble(toData.getElementsByTagName("hotwater").item(0).getTextContent())*tariffs.hotwater;;
-        if((toData.getElementsByTagName("electricity")!=null))
-            result += Double.parseDouble(toData.getElementsByTagName("electricity").item(0).getTextContent())*tariffs.electricity;;
-        if((toData.getElementsByTagName("gas")!=null))
-            result += Double.parseDouble(toData.getElementsByTagName("gas").item(0).getTextContent())*tariffs.gas;;
 
         return result;
     }
@@ -340,33 +239,23 @@ public class Housekeeper implements Serializable{
         return result;
     }
 
-    private double getBill(Element toData,Element beforeData){
-        double result = 0.0;
-
-        if((toData.getElementsByTagName("coldwater")!=null)
-                &&(beforeData.getElementsByTagName("coldwater")!=null))
-            result += (Double.parseDouble(toData.getElementsByTagName("coldwater").item(0).getTextContent())
-                    -Double.parseDouble(beforeData.getElementsByTagName("coldwater").item(0).getTextContent()))*tariffs.coldwater;
-
-        if((toData.getElementsByTagName("hotwater")!=null)
-                &&(beforeData.getElementsByTagName("hotwater")!=null))
-            result += (Double.parseDouble(toData.getElementsByTagName("hotwater").item(0).getTextContent())
-                    -Double.parseDouble(beforeData.getElementsByTagName("hotwater").item(0).getTextContent()))*tariffs.hotwater;
-
-        if((toData.getElementsByTagName("electricity")!=null)
-                &&(beforeData.getElementsByTagName("electricity")!=null))
-            result += (Double.parseDouble(toData.getElementsByTagName("electricity").item(0).getTextContent())
-                    -Double.parseDouble(beforeData.getElementsByTagName("electricity").item(0).getTextContent()))*tariffs.electricity;
-
-        if((toData.getElementsByTagName("gas")!=null)
-                &&(beforeData.getElementsByTagName("gas")!=null))
-            result += (Double.parseDouble(toData.getElementsByTagName("gas").item(0).getTextContent())
-                    -Double.parseDouble(beforeData.getElementsByTagName("gas").item(0).getTextContent()))*tariffs.gas;
-
-        return result;
+    public void setTariffs(Tariffs tariffs){
+        this.tariffs = tariffs;
     }
 
-    public double getBill2(String street, int buildingNumber, int flatNumber){
+    public double getBill(Flat flat){
+        Calendar toData = GregorianCalendar.getInstance();
+        int currentMonth = toData.get(Calendar.MONTH)+1;
+        int currentYear = toData.get(Calendar.YEAR);
+        Registration registrationCurrentDay = getRegistrationCurrentDay(currentMonth,currentYear,flat);
+        if(registrationCurrentDay == null) return 0.0;
+        Registration registrationBeforeData = getRegistrationBeforeData(currentMonth,currentYear,flat);
+        if(registrationBeforeData == null) return getBill(registrationCurrentDay);
+        else return getBill(registrationCurrentDay,registrationBeforeData);
+        //return 0;
+    }
+
+    public double getBill(String street, int buildingNumber, int flatNumber){
         Building building = null;
 
         for (int i = 0; i < buildings.size(); i++) {
@@ -389,23 +278,6 @@ public class Housekeeper implements Serializable{
         Registration registrationBeforeData = getRegistrationBeforeData(currentMonth,currentYear,flat);
         if(registrationBeforeData == null) return getBill(registrationCurrentDay);
         else return getBill(registrationCurrentDay,registrationBeforeData);
-    }
-
-    public double getBill(String street, int buildingNumber, int flatNumber){
-
-        Element building = getBuilding(street,buildingNumber);
-        if(building == null) return 0.0;
-        Element flat = getFlat(building,flatNumber);
-        if(flat == null) return 0.0;
-        Calendar toData = GregorianCalendar.getInstance();
-        int currentMonth = toData.get(Calendar.MONTH)+1;
-        int currentYear = toData.get(Calendar.YEAR);
-        Element registrationCurrentDay = getRegistrationCurrentDay(currentMonth,currentYear,flat);
-        if(registrationCurrentDay == null) return 0.0;
-        Element registrationBeforeData = getRegistrationBeforeData(currentMonth,currentYear,flat);
-        if(registrationBeforeData == null) return getBill(registrationCurrentDay);
-        else return getBill(registrationCurrentDay,registrationBeforeData);
-        
     }
 
     public double getBill(Building building, int flatNumber){
@@ -435,13 +307,13 @@ public class Housekeeper implements Serializable{
         bufElementTrafic.setTextContent(String.valueOf(coldWater));
         registration.appendChild(bufElementTrafic);
         bufElementTrafic = (Element) doc.createElement("hotwater") ;
-        bufElementTrafic.setTextContent(String.valueOf(coldWater));
+        bufElementTrafic.setTextContent(String.valueOf(hotWater));
         registration.appendChild(bufElementTrafic);
         bufElementTrafic = (Element) doc.createElement("electricity") ;
-        bufElementTrafic.setTextContent(String.valueOf(coldWater));
+        bufElementTrafic.setTextContent(String.valueOf(electricity));
         registration.appendChild(bufElementTrafic);
         bufElementTrafic = (Element) doc.createElement("gas") ;
-        bufElementTrafic.setTextContent(String.valueOf(coldWater));
+        bufElementTrafic.setTextContent(String.valueOf(gas));
         registration.appendChild(bufElementTrafic);
 
         saveTransformXML();

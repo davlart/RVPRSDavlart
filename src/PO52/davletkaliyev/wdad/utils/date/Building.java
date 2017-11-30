@@ -7,10 +7,9 @@ import java.util.List;
  * Created by ArthurArt on 06.11.2017.
  */
 public class Building implements Serializable {
-    String street;
-    int number;
-
-    List<Flat> flatList;
+    private  String street;
+    private int number;
+    private List<Flat> flatList;
 
     public List<Flat> getFlatList() {
         return flatList;

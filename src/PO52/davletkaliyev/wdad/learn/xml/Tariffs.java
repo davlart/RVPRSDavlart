@@ -9,6 +9,8 @@ public class Tariffs {
     public double electricity;
     public double gas;
 
+    public Tariffs(){}
+
     public Tariffs(double coldwater, double hotwater, double electricity, double gas) {
         this.coldwater = coldwater;
         this.hotwater = hotwater;

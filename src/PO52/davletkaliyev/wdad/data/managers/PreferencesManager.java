@@ -16,7 +16,10 @@ import PO52.davletkaliyev.wdad.utils.PreferencesConstantManager;
  import javax.xml.transform.TransformerFactory;
  import javax.xml.transform.dom.DOMSource;
  import javax.xml.transform.stream.StreamResult;
- import java.io.File;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.File;
  import java.util.Enumeration;
  import java.util.Properties;
 
@@ -24,19 +27,28 @@ public class PreferencesManager {
      private static volatile PreferencesManager instance;
      private Document doc;
      private static final String FILE_PATH="D:\\Work\\РВПРС\\laba1\\src\\PO52\\davletkaliyev\\wdad\\resources\\configuration\\appconfig.xml";
-
+     XPath xPath;
     private PreferencesManager() throws Exception {
+        this.xPath =  XPathFactory.newInstance().newXPath();
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setValidating(false);
         DocumentBuilder builder = factory.newDocumentBuilder();
         doc = builder.parse(new File(FILE_PATH));
     }
 
-    public String getName(String object) {
+    public String getName(String object) throws XPathExpressionException {
         StringBuilder nameInfo = new StringBuilder("rmi://");
         nameInfo.append(getProperty(PreferencesConstantManager.REGISTRYADDRESS)).append(":")
                 .append(getProperty(PreferencesConstantManager.REGISTRYPORT)).append("/")
                 .append(object);
+        return nameInfo.toString();
+    }
+
+    public String getDBUrl() throws XPathExpressionException {
+        StringBuilder nameInfo = new StringBuilder("jdbc:mysql://");
+        nameInfo.append(getProperty(PreferencesConstantManager.HOSTNAME)).append(":")
+                .append(getProperty(PreferencesConstantManager.PORT)).append("/")
+                .append(getProperty(PreferencesConstantManager.DBNAME));
         return nameInfo.toString();
     }
 
@@ -46,7 +58,6 @@ public class PreferencesManager {
                 if (instance == null)
                     instance = new PreferencesManager();
         }
-
         return instance;
     }
 
@@ -54,8 +65,9 @@ public class PreferencesManager {
         getElement(key).setTextContent(value);
     }
 
-    public String getProperty(String key) {
-        return getElement(key).getTextContent();
+    public String getProperty(String key) throws XPathExpressionException {
+        String buf = '/'+key.replace('.','/');
+        return xPath.compile(buf).evaluate(doc);
     }
 
     public void setProperties(Properties prop) {
@@ -89,7 +101,7 @@ public class PreferencesManager {
         Element element;
         for (int i = 0; i < nodeList.getLength(); i++) {
             element = (Element) nodeList.item(i);
-            if ((element.getAttribute("class").equals(className)) & (element.getAttribute("name").equals(name)))
+            if ((element.getAttribute("class").equals(className)) && (element.getAttribute("name").equals(name)))
                 return;
             }
         element = doc.createElement("bindedobject");
@@ -121,9 +133,12 @@ public class PreferencesManager {
         return (Element) node;
     }
 
+//    String new_str = str.replace ('1', '2');
+
     //region Createregistry
     @Deprecated
-    public String getCreateregistry() {
+    public String getCreateregistry() throws XPathExpressionException {
+        //return xPath.compile(PreferencesConstantManager.CREATEREGISTRY.replace ('.', '/')).evaluate(doc);
         return getElement("createregistry").getTextContent();
     }
 
@@ -135,7 +150,7 @@ public class PreferencesManager {
 
     //region Registryaddress
     @Deprecated
-    public String getRegistryaddress() {
+    public String getRegistryaddress() throws XPathExpressionException {
         return getElement("registryaddress").getTextContent();
     }
 
@@ -147,7 +162,7 @@ public class PreferencesManager {
 
     //region Registryport
     @Deprecated
-    public int getRegistryport() {
+    public int getRegistryport() throws XPathExpressionException {
         return Integer.parseInt(getElement("registryport").getTextContent());
     }
 

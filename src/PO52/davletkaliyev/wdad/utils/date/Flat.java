@@ -7,10 +7,10 @@ import java.util.List;
  * Created by ArthurArt on 06.11.2017.
  */
 public class Flat implements Serializable {
-    int number;
-    int personsQuantity;
-    double area;
-    List<Registration> registrations;
+    private int number;
+    private int personsQuantity;
+    private double area;
+    private List<Registration> registrations;
 
     public Flat(){
 
@@ -55,5 +55,15 @@ public class Flat implements Serializable {
 
     public List<Registration> getRegistrations() {
         return registrations;
+    }
+
+    public String toString(){
+        StringBuilder result = new StringBuilder();
+
+        result.append(String.format("Квартира: %d, Площадь: %f, Кол-во людей: %d %n",this.number,this.area,this.personsQuantity));
+        for (Registration reg: this.registrations) {
+        result.append(reg.toString()+"\n");
+        }
+        return result.toString();
     }
 }

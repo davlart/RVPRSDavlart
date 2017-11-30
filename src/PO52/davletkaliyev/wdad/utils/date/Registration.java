@@ -1,21 +1,21 @@
 package PO52.davletkaliyev.wdad.utils.date;
 
 import java.io.Serializable;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 /**
  * Created by ArthurArt on 06.11.2017.
  */
 public class Registration implements Serializable {
-    Date date;
-    double coldwater;
-    double hotwater;
-    double electricity;
-    double gas;
+    private Date date;
+    private double coldwater;
+    private double hotwater;
+    private double electricity;
+    private double gas;
 
-    public  Registration(){
-
-    }
+    public  Registration(){}
 
     public Registration(Date date, double coldwater, double hotwater, double electricity, double gas) {
         this.date = date;
@@ -26,7 +26,6 @@ public class Registration implements Serializable {
     }
 
     public Date getDate() {
-
         return date;
     }
 
@@ -64,5 +63,12 @@ public class Registration implements Serializable {
 
     public void setGas(double gas) {
         this.gas = gas;
+    }
+
+    public String toString(){
+        Calendar calendar = new GregorianCalendar();
+        calendar.setTime(this.date);
+        return String.format("Месяц: %d, Год: %d, холодная вода: %f, горячая вода: %f, электричество: %f, газ: %f",
+                (calendar.get(Calendar.MONTH) + 1), calendar.get(Calendar.YEAR),this.coldwater,this.hotwater,this.electricity,this.gas);
     }
 }
