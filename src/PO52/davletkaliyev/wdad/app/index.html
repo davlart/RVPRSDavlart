@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+
+<html ng-app="myApp">
+<head>
+    <meta charset="utf-8">
+    <title>Site</title>
+    <link href="css/stile.css" rel="stylesheet">
+    <script src="js/controllers/registrationController.js"></script>
+</head>
+<body>
+<div class="header">
+        <a class = "page-header__logo" href ="#">
+            <img src = "https://assets.htmlacademy.ru/img/logo.v2.svg" href ="#" >
+        </a>
+        <div class="page-header__middle">
+            <b>ТСЖ "Зажрались-001"</b><br> коммунальные услуги
+         </div>
+        <div class="page-header__right">
+            <div style="display:inline-block; vertical-align: middle; "><b>Ольга Николаевна ЖЭК</b><br> <b>дата:05-ноября-2016</b></div>
+            <a style="display:inline-block; vertical-align: middle; " href ="#"><img src="img/photo.jpg" height="50" width="50"/></a>
+        </div>
+</div>
+
+<div class = "page-body">
+    <div class = "page-pozitioner">
+        <ul class="menu">
+            <li class="menu-item">Дома</li>
+            <li class="menu-item">Счета</li>
+            <li class="menu-item">Показания</li>
+        </ul>
+        <h2>По адресу</h2>
+        <div style="margin-left: 5px">
+            <select class="soflow-color">
+                <!-- This method is nice because it doesn't require extra div tags, but it also doesn't retain the style across all browsers. -->
+                <option>Нищебродская</option>
+                <option>Н.Понова</option>
+                <option>Галактионовская</option>
+            </select>
+            <select class="soflow-color">
+                <!-- This method is nice because it doesn't require extra div tags, but it also doesn't retain the style across all browsers. -->
+                <option>404</option>
+                <option>403</option>
+                <option>402</option>
+            </select>
+            <select class="soflow-color">
+                <!-- This method is nice because it doesn't require extra div tags, but it also doesn't retain the style across all browsers. -->
+                <option>1111</option>
+                <option>1212</option>
+                <option>3211</option>
+            </select>
+        </div>
+        <h2>По лицевому счету</h2>
+        <input type="text" size="40" placeholder = "№ счета или фамилия" style="padding: 6px" ng-model="filterByDate">
+        <hr>
+
+        <div ng-controller="registrationController">
+
+            <div ng-repeat="registration in registrations | filter:{date:filterByDate}">
+                <div class="registrations">
+                    <div class="registrations-date" style="display:inline-block;  width: 500px">{{registration.date}}</div>
+                    <div style="display:inline-block; color: silver; font-size: 17px; text-align: right; width: 96px">
+                        {{registration.day}}
+                        <img src="img/rg.png" height="10" width="10" style="display:inline-block; align: right;">
+                    </div>
+                    <div class="registrations-tarrifs">
+                        <div class="registrations-tarrifs-items">
+                            Холодная вода: {{registration.coldwater}} <br> Горячая вода: {{registration.hotwater}}
+                        </div>
+                        <div class="registrations-tarrifs-items" style="margin-left:50px; width: 200px; ">
+                            Электричество: {{registration.electricity}} <br> Газ: {{registration.gas}}
+                        </div>
+                    </div>
+                </div>
+             </div>
+        </div>
+    </div>
+</div>
+<script src="js/lib/angular.min.js"></script>
+<script src="js/controllers/registrationController.js"></script>
+</body>

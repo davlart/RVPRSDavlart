@@ -1,0 +1,139 @@
+body {
+    height: 100%;
+}
+
+.page-header__inner {
+    display: block;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    padding-right: 25px;
+    padding-left: 25px;
+}
+
+/*.page-header {*/
+    /*position: relative;*/
+    /*z-index: 11;*/
+    /*min-height: 60px;*/
+    /*color: #fff;*/
+    /*background-color: #2d2d44;*/
+/*}*/
+
+.header {
+    height: 8vh;
+    width: 100%;
+    color: #fff;
+    background-color: #2d2d44;
+    text-align: center;
+    /*text-align: center;*/
+}
+
+.page-header__logo img {
+    min-height: 60px;
+    width: 104px;
+    height: 36px;
+}
+
+.page-header__logo {
+    display:inline-block;
+    float: left;
+    vertical-align: middle;
+    padding-left:20px ;
+}
+.page-header__middle {
+    margin:  auto;
+    display:inline-block;
+    vertical-align: middle;
+    width: 76%;
+}
+
+.page-header__right {
+    margin:  auto;
+    display:inline-block;
+    vertical-align: middle;
+    padding-top: 5px;
+    font-size: 13px;
+    text-align: right;
+}
+
+.page-body {
+    width: 100%;
+    height: 92vh;
+    margin: 0 auto;
+    //min-height: 600px;
+}
+
+.page-pozitioner{
+    border: 1px solid dimgray;
+    margin: 0 auto;
+    width: 50%;
+    height: 100%;
+}
+
+.menu{
+    margin: 0px 0px 2px 0px;
+    padding: 0;
+    min-height: 24px;
+}
+
+.menu-item{
+    float:left;
+    width: 33%;
+    text-align: center;
+    display: inline;
+    border: 1px solid dimgray;
+    padding: auto;
+}
+
+.menu-item:hover{
+    /*color:deepskyblue;*/
+    /*border-color: deepskyblue;*/
+    color: #fff;
+    background-color: #2d2d44;
+}
+
+select.soflow, select.soflow-color {
+    -webkit-appearance: button;
+    -webkit-user-select: none;
+    background-image: url(../img/pict.jpeg) ;
+    background-position: 97% center;
+    background-repeat: no-repeat;
+    padding: 5px;
+    width: 30%;
+    display: inline;
+    border: 1px solid dimgray;
+    margin-left: -5px;
+}
+h2 {
+    font-family: Calibri;
+    font-weight: bold;
+    font-size: 16px;
+    margin: 3px;
+}
+
+.registrations {
+    margin: 30px;
+    height: 68px;
+    border-bottom: 1px solid #ccc!important;
+}
+
+/*.registrations:hover {*/
+    /*color: #fff;*/
+    /*background-color: #2d2d44;*/
+/*}*/
+
+.registrations-date {
+    font-family: Calibri;
+    font-weight: bold;
+    font-size: 20px;
+    margin: 3px;
+}
+
+.registrations-tarrifs {
+    display:inline-block;
+    color: silver;
+    font-size: 14px
+}
+.registrations-tarrifs-items {
+    display:inline-block;
+}
